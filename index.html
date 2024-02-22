@@ -1,13 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather App | API</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <h1 class="heading">Weather App API</h1>
-    <script src="app.js"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Weather App | API</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<h1 class="heading">Weather App API</h1>
+		<div class="container">
+			<div class="summary-box">
+				<h3 class="heading">Weather</h3>
+				<div class="date">
+					<span class="day">Day:  </span><span class="time">Time</span>
+				<div>
+			</div>
+			<div class="conditions-box">
+				<div class="temp">
+					<span class="degreesC">Temp ℃</span>
+					<span class="degreesF" style="display: none">Temp ℉</span>
+				</div>
+				<div class="primary-conditions">
+					<div class="precipitation-box">
+						Precipitation:
+						<span class="precipitation-percent">%</span>
+					</div>
+					<div class="humidity-box">
+						Humidity:
+						<span class="humidity-percent">%</span>
+					</div>
+					<div class="wind-box">
+						Wind:
+						<span class="wind-speed">mph</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="app.js"></script>
+	</body>
 </html>
