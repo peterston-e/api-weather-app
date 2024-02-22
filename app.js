@@ -46,11 +46,6 @@ fetchWeather(displayData);
 
 // // Alternative to setting the callback function
 // async function useData() {
-//     try {
 //       const weatherData = await fetchWeather();
-//       // Use the weatherData object here
-
-//     } catch (error) {
-//       console.error(error);
-//     }
+//       // Use weatherData object here
 //   }
