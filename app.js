@@ -43,32 +43,26 @@ function displayData(weatherData) {
 }
 
 // date format should be iso8601 string YYYY-MM-DDT00:00
-function convertDate(date) {
-	// split the date
-	const dateArray = date.split("T");
-	// extract time
-	const hourMin = dateArray[1];
-	console.log(hourMin);
+function formatDate(timeString) {
+	// Convert the time string to a Date object
+	const date = new Date(timeString);
 
-	const todaysDate = new Date(date);
-	const dayNum = todaysDate.getDay();
+	// Define options for toLocaleString() to format the date
+	const options = {
+		weekday: "long",
+		hour: "numeric",
+		minute: "numeric",
+		hourCycle: "h12",
+	};
 
-	// extract day of the week
-	const dayNames = [
-		"Sunday",
-		"Monday",
-		"Tuesday",
-		"Wednesday",
-		"Thursday",
-		"Friday",
-		"Saturday",
-	];
+	// Format the date to the desired format
+	const formattedTime = date.toLocaleString("en-GB", options);
 
-	const weekday = dayNames[dayNum];
-	console.log(weekday);
-	// return dayName;
+	// Output: "Friday 10:30 am"
+	return formattedTime;
 }
-convertDate("2024-02-23T08:00");
+
+console.log(formatDate("2024-02-23T08:00"));
 
 fetchWeather(displayData);
 
