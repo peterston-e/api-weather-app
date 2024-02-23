@@ -42,6 +42,34 @@ function displayData(weatherData) {
 	windSpeed.textContent = `${currentWindSpeed} km/h`;
 }
 
+// date format should be iso8601 string YYYY-MM-DDT00:00
+function convertDate(date) {
+	// split the date
+	const dateArray = date.split("T");
+	// extract time
+	const hourMin = dateArray[1];
+	console.log(hourMin);
+
+	const todaysDate = new Date(date);
+	const dayNum = todaysDate.getDay();
+
+	// extract day of the week
+	const dayNames = [
+		"Sunday",
+		"Monday",
+		"Tuesday",
+		"Wednesday",
+		"Thursday",
+		"Friday",
+		"Saturday",
+	];
+
+	const weekday = dayNames[dayNum];
+	console.log(weekday);
+	// return dayName;
+}
+convertDate("2024-02-23T08:00");
+
 fetchWeather(displayData);
 
 // // Alternative to setting the callback function
