@@ -7,11 +7,21 @@ const humidity = document.querySelector(".humidity-percent");
 const windSpeed = document.querySelector(".wind-speed");
 
 // Save URL to variable
-const apiEndpoint =
+let apiEndpoint =
 	"https://api.open-meteo.com/v1/forecast?latitude=50.8284&longitude=-0.1395&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=uv_index&daily=weather_code,uv_index_max&timezone=GMT";
 
 // Create async function to deal with api request - callback function as param
 async function fetchWeather(callback) {
+	// get position
+	const position = await getPosition();
+	const lat = position.coords.latitude.toFixed(4);
+	const long = position.coords.longitude.toFixed(4);
+	apiEndpoint = updateApiEndpoint(apiEndpoint, lat, long);
+
+	// transform heading to use reverse geo.
+
+	// test with VPN
+
 	const response = await fetch(apiEndpoint, { method: "GET" });
 
 	if (!response.ok) {
@@ -22,6 +32,18 @@ async function fetchWeather(callback) {
 	// parse the response
 	const data = await response.json();
 	callback(data);
+}
+
+function getPosition() {
+	// Simple wrapper
+	return new Promise((res, rej) => {
+		navigator.geolocation.getCurrentPosition(res, rej);
+	});
+}
+
+function updateApiEndpoint(apiEndpoint, lat, long) {
+	apiEndpoint = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=uv_index&daily=weather_code,uv_index_max&timezone=GMT`;
+	return apiEndpoint;
 }
 
 // callback function to be used with api call
@@ -71,13 +93,6 @@ fetchWeather(displayData);
 //       const weatherData = await fetchWeather();
 //       // Use weatherData object here
 //   }
-
-const geoTest = document.querySelector(".geo-test");
-
-navigator.geolocation.getCurrentPosition((position) => {
-	const { latitude, longitude } = position.coords;
-	geoTest.textContent = `lat: ${latitude}`;
-});
 
 // async function getGeo() {}
 // console.log(x);
