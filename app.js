@@ -79,8 +79,8 @@ navigator.geolocation.getCurrentPosition((position) => {
 	geoTest.textContent = `lat: ${latitude}`;
 });
 
-async function getGeo() {}
-console.log(x);
+// async function getGeo() {}
+// console.log(x);
 
 // const options = {
 // 	enableHighAccuracy: true,
