@@ -27,7 +27,7 @@ async function fetchWeather(callback) {
 // callback function to be used with api call
 function displayData(weatherData) {
 	const currentTime = weatherData.current.time;
-	time.textContent = currentTime;
+	time.textContent = formatDate(currentTime);
 
 	const currentTemp = weatherData.current.temperature_2m;
 	degC.textContent = `${currentTemp} ℃`;
@@ -71,3 +71,56 @@ fetchWeather(displayData);
 //       const weatherData = await fetchWeather();
 //       // Use weatherData object here
 //   }
+
+const geoTest = document.querySelector(".geo-test");
+
+navigator.geolocation.getCurrentPosition((position) => {
+	const { latitude, longitude } = position.coords;
+	geoTest.textContent = `lat: ${latitude}`;
+});
+
+async function getGeo() {}
+console.log(x);
+
+// const options = {
+// 	enableHighAccuracy: true,
+// 	timeout: 5000,
+// 	maximumAge: 0,
+// };
+
+// let latitude = "";
+// let longitude = "";
+// function success(pos) {
+// 	const crd = pos.coords;
+// 	latitude = crd.latitude;
+// 	longitude = crd.longitude;
+// 	// console.log(crd);
+// 	// console.log("Your current position is:");
+// 	// console.log(`Latitude : ${crd.latitude}`);
+// 	// console.log(`Longitude: ${crd.longitude}`);
+// 	// console.log(`More or less ${crd.accuracy} meters.`);
+// 	// return crd;
+// }
+
+// function error(err) {
+// 	console.warn(`ERROR(${err.code}): ${err.message}`);
+// }
+
+// const xyz = navigator.geolocation.getCurrentPosition(success, error, options);
+// console.log(latitude, longitude);
+
+// api call to get area from lat and long
+// async function reverseGeoLocate(getPositionFunction) {
+// 	const geoData = navigator.geolocation.getCurrentPosition(
+// 		success,
+// 		error,
+// 		options
+// 	);
+
+// 	// const latitude = ;
+// 	// const longitude = ;
+
+// 	// geoApiEndpoint = `https://api.postcodes.io/postcodes?lon=${}&lat=${}`
+
+// 	const responce = await fetch();
+// }
