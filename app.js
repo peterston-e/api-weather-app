@@ -5,13 +5,73 @@ const degC = document.querySelector(".degreesC");
 const precipitation = document.querySelector(".precipitation-percent");
 const humidity = document.querySelector(".humidity-percent");
 const windSpeed = document.querySelector(".wind-speed");
+const locationTitle = document.querySelector(".title");
+const weatherCode = document.querySelector(".weather-code");
 
-// Save URL to variable
-const apiEndpoint =
+// weather codes
+const weatherCodes = {
+	0: "Clear sky",
+	1: "Mainly clear",
+	2: "Partly cloudy",
+	3: "Overcast",
+	45: "Fog",
+	48: "Fog",
+	51: "Drizzle: Light",
+	52: "Drizzle: Moderate",
+	53: "Drizzle: Dense intensity",
+	56: "Freezing Drizzle: Light",
+	57: "Freezing Drizzle: Dense intensity",
+	61: "Rain: Slight",
+	63: "Rain: Moderate",
+	65: "Rain: Heavy intensity",
+	66: "Freezing Rain: Light",
+	67: "Freezing Rain: Heavy intensity",
+	71: "Snow fall: Slight",
+	73: "Snow fall: Moderate",
+	75: "Snow fall: Heavy intensity",
+	77: "Snow grains",
+	80: "Rain showers: Slight",
+	81: "Rain showers: Moderate",
+	82: "Rain showers: Violent",
+	85: "Snow showers: Slight",
+	86: "Snow showers: Heavy",
+	95: "Thunderstorm: Slight or moderate",
+	96: "Thunderstorm with slight hail",
+	99: "Thunderstorm with heavy hail",
+};
+
+// Save URL to variable serves as default also
+let apiEndpoint =
 	"https://api.open-meteo.com/v1/forecast?latitude=50.8284&longitude=-0.1395&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=uv_index&daily=weather_code,uv_index_max&timezone=GMT";
 
 // Create async function to deal with api request - callback function as param
 async function fetchWeather(callback) {
+	// call to get position from browser
+	const position = await getPosition();
+	const lat = position.coords.latitude.toFixed(4);
+	const long = position.coords.longitude.toFixed(4);
+
+	// adjusted variable to work with geo api.
+	latSlice = lat.slice(0, -1);
+	longSlice = long.slice(0, -1);
+
+	// build out url with lat and long
+	apiEndpoint = updateApiEndpoint(apiEndpoint, lat, long);
+
+	// transform heading to use reverse geo. call a function
+	const geoCodeApiEndpoint = `https://api.postcodes.io/postcodes?lon=${longSlice}&lat=${latSlice}`;
+	const reverseGeoResponse = await fetch(geoCodeApiEndpoint, { method: "GET" });
+	if (!reverseGeoResponse.ok) {
+		console.error(reverseGeoResponse.status);
+		console.error(reverseGeoResponse.text());
+	}
+
+	// call for reverse geo data
+	const geoData = await reverseGeoResponse.json();
+	const exactLocation = geoData.result[0].admin_ward;
+	locationTitle.textContent = exactLocation;
+
+	// call for weather data
 	const response = await fetch(apiEndpoint, { method: "GET" });
 
 	if (!response.ok) {
@@ -24,6 +84,19 @@ async function fetchWeather(callback) {
 	callback(data);
 }
 
+// Alternative to using fetch
+function getPosition() {
+	// Simple wrapper
+	return new Promise((res, rej) => {
+		navigator.geolocation.getCurrentPosition(res, rej);
+	});
+}
+
+function updateApiEndpoint(apiEndpoint, lat, long) {
+	apiEndpoint = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=uv_index&daily=weather_code,uv_index_max&timezone=GMT`;
+	return apiEndpoint;
+}
+
 // callback function to be used with api call
 function displayData(weatherData) {
 	const currentTime = weatherData.current.time;
@@ -33,13 +106,17 @@ function displayData(weatherData) {
 	degC.textContent = `${currentTemp} ℃`;
 
 	const currentPrecipitation = weatherData.current.precipitation;
-	precipitation.textContent = `${currentPrecipitation} %`;
+	precipitation.textContent = `${currentPrecipitation} mm`;
+	console.log(currentPrecipitation);
 
 	const currentHumidity = weatherData.current.relative_humidity_2m;
 	humidity.textContent = `${currentHumidity} %`;
 
 	const currentWindSpeed = weatherData.current.wind_speed_10m;
 	windSpeed.textContent = `${currentWindSpeed} km/h`;
+
+	const currentWeatherCode = weatherData.current.weather_code;
+	weatherCode.textContent = `${weatherCodes[currentWeatherCode]}`;
 }
 
 // date format should be iso8601 string YYYY-MM-DDT00:00
@@ -62,8 +139,6 @@ function formatDate(timeString) {
 	return formattedTime;
 }
 
-console.log(formatDate("2024-02-23T08:00"));
-
 fetchWeather(displayData);
 
 // // Alternative to setting the callback function
@@ -71,56 +146,3 @@ fetchWeather(displayData);
 //       const weatherData = await fetchWeather();
 //       // Use weatherData object here
 //   }
-
-const geoTest = document.querySelector(".geo-test");
-
-navigator.geolocation.getCurrentPosition((position) => {
-	const { latitude, longitude } = position.coords;
-	geoTest.textContent = `lat: ${latitude}`;
-});
-
-async function getGeo() {}
-console.log(x);
-
-// const options = {
-// 	enableHighAccuracy: true,
-// 	timeout: 5000,
-// 	maximumAge: 0,
-// };
-
-// let latitude = "";
-// let longitude = "";
-// function success(pos) {
-// 	const crd = pos.coords;
-// 	latitude = crd.latitude;
-// 	longitude = crd.longitude;
-// 	// console.log(crd);
-// 	// console.log("Your current position is:");
-// 	// console.log(`Latitude : ${crd.latitude}`);
-// 	// console.log(`Longitude: ${crd.longitude}`);
-// 	// console.log(`More or less ${crd.accuracy} meters.`);
-// 	// return crd;
-// }
-
-// function error(err) {
-// 	console.warn(`ERROR(${err.code}): ${err.message}`);
-// }
-
-// const xyz = navigator.geolocation.getCurrentPosition(success, error, options);
-// console.log(latitude, longitude);
-
-// api call to get area from lat and long
-// async function reverseGeoLocate(getPositionFunction) {
-// 	const geoData = navigator.geolocation.getCurrentPosition(
-// 		success,
-// 		error,
-// 		options
-// 	);
-
-// 	// const latitude = ;
-// 	// const longitude = ;
-
-// 	// geoApiEndpoint = `https://api.postcodes.io/postcodes?lon=${}&lat=${}`
-
-// 	const responce = await fetch();
-// }
