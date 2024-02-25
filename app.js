@@ -6,10 +6,40 @@ const precipitation = document.querySelector(".precipitation-percent");
 const humidity = document.querySelector(".humidity-percent");
 const windSpeed = document.querySelector(".wind-speed");
 const locationTitle = document.querySelector(".title");
-console.log(locationTitle);
 
-console.log(precipitation);
-// Save URL to variable
+// weather codes
+const weatherCodes = {
+	0: "Clear sky",
+	1: "Mainly clear",
+	2: "Partly cloudy",
+	3: "Overcast",
+	45: "Fog",
+	48: "Fog",
+	51: "Drizzle: Light",
+	52: "Drizzle: Moderate",
+	53: "Drizzle: Dense intensity",
+	56: "Freezing Drizzle: Light",
+	57: "Freezing Drizzle: Dense intensity",
+	61: "Rain: Slight",
+	63: "Rain: Moderate",
+	65: "Rain: Heavy intensity",
+	66: "Freezing Rain: Light",
+	67: "Freezing Rain: Heavy intensity",
+	71: "Snow fall: Slight",
+	73: "Snow fall: Moderate",
+	75: "Snow fall: Heavy intensity",
+	77: "Snow grains",
+	80: "Rain showers: Slight",
+	81: "Rain showers: Moderate",
+	82: "Rain showers: Violent",
+	85: "Snow showers: Slight",
+	86: "Snow showers: Heavy",
+	95: "Thunderstorm: Slight or moderate",
+	96: "Thunderstorm with slight hail",
+	99: "Thunderstorm with heavy hail",
+};
+
+// Save URL to variable serves as default also
 let apiEndpoint =
 	"https://api.open-meteo.com/v1/forecast?latitude=50.8284&longitude=-0.1395&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=uv_index&daily=weather_code,uv_index_max&timezone=GMT";
 
@@ -39,8 +69,6 @@ async function fetchWeather(callback) {
 
 	const exactLocation = geoData.result[0].admin_ward;
 	locationTitle.textContent = exactLocation;
-
-	// test with VPN
 
 	const response = await fetch(apiEndpoint, { method: "GET" });
 
@@ -104,8 +132,6 @@ function formatDate(timeString) {
 	// Output: "Friday 10:30 am"
 	return formattedTime;
 }
-
-console.log(formatDate("2024-02-23T08:00"));
 
 fetchWeather(displayData);
 
