@@ -6,6 +6,7 @@ const precipitation = document.querySelector(".precipitation-percent");
 const humidity = document.querySelector(".humidity-percent");
 const windSpeed = document.querySelector(".wind-speed");
 const locationTitle = document.querySelector(".title");
+const weatherCode = document.querySelector(".weather-code");
 
 // weather codes
 const weatherCodes = {
@@ -45,31 +46,32 @@ let apiEndpoint =
 
 // Create async function to deal with api request - callback function as param
 async function fetchWeather(callback) {
-	// get geo location from browser
+	// call to get position from browser
 	const position = await getPosition();
-	let lat = position.coords.latitude.toFixed(4);
-	let long = position.coords.longitude.toFixed(4);
+	const lat = position.coords.latitude.toFixed(4);
+	const long = position.coords.longitude.toFixed(4);
 
 	// adjusted variable to work with geo api.
-	lat = lat.slice(0, -1);
-	long = long.slice(0, -1);
+	latSlice = lat.slice(0, -1);
+	longSlice = long.slice(0, -1);
 
 	// build out url with lat and long
 	apiEndpoint = updateApiEndpoint(apiEndpoint, lat, long);
 
 	// transform heading to use reverse geo. call a function
-	const geoCodeApiEndpoint = `https://api.postcodes.io/postcodes?lon=${long}&lat=${lat}`;
+	const geoCodeApiEndpoint = `https://api.postcodes.io/postcodes?lon=${longSlice}&lat=${latSlice}`;
 	const reverseGeoResponse = await fetch(geoCodeApiEndpoint, { method: "GET" });
 	if (!reverseGeoResponse.ok) {
 		console.error(reverseGeoResponse.status);
 		console.error(reverseGeoResponse.text());
 	}
 
+	// call for reverse geo data
 	const geoData = await reverseGeoResponse.json();
-
 	const exactLocation = geoData.result[0].admin_ward;
 	locationTitle.textContent = exactLocation;
 
+	// call for weather data
 	const response = await fetch(apiEndpoint, { method: "GET" });
 
 	if (!response.ok) {
@@ -82,6 +84,7 @@ async function fetchWeather(callback) {
 	callback(data);
 }
 
+// Alternative to using fetch
 function getPosition() {
 	// Simple wrapper
 	return new Promise((res, rej) => {
@@ -111,6 +114,9 @@ function displayData(weatherData) {
 
 	const currentWindSpeed = weatherData.current.wind_speed_10m;
 	windSpeed.textContent = `${currentWindSpeed} km/h`;
+
+	const currentWeatherCode = weatherData.current.weather_code;
+	weatherCode.textContent = `${weatherCodes[currentWeatherCode]}`;
 }
 
 // date format should be iso8601 string YYYY-MM-DDT00:00
