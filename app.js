@@ -58,7 +58,7 @@ async function fetchWeather(callback) {
 	// build out url with lat and long
 	apiEndpoint = updateApiEndpoint(apiEndpoint, lat, long);
 
-	// transform heading to use reverse geo. call a function
+	// use reverse geo.
 	const geoCodeApiEndpoint = `https://api.postcodes.io/postcodes?lon=${longSlice}&lat=${latSlice}`;
 	const reverseGeoResponse = await fetch(geoCodeApiEndpoint, { method: "GET" });
 	if (!reverseGeoResponse.ok) {
@@ -66,7 +66,7 @@ async function fetchWeather(callback) {
 		console.error(reverseGeoResponse.text());
 	}
 
-	// call for reverse geo data
+	// call for reverse geo data and set title
 	const geoData = await reverseGeoResponse.json();
 	const exactLocation = geoData.result[0].admin_ward;
 	locationTitle.textContent = exactLocation;
